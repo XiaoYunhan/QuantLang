@@ -1,0 +1,12 @@
+# MACOS
+.DS_Store
+
+# VSCODE
+.vscode/
+
+# PYTHON
+__pycache__/
+*.pyc
+
+# JUPYTER
+.ipynb_checkpoints/
