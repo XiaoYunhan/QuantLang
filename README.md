@@ -1,73 +1,50 @@
 # QuantLang
 
-QuantLang is a Python-based domain-specific language (DSL) designed for evaluating financial portfolios and calculating various financial metrics, such as option Greeks. The project leverages Yahoo Finance for fetching real-time and historical financial data.
+QuantLang is a Python-based domain-specific language (DSL) designed for evaluating financial portfolios and calculating various financial metrics—most notably, option Greeks (such as vega, delta, and theta). The project builds a custom abstract syntax tree (AST) from financial expressions and uses it to evaluate portfolio values, apply currency conversion, and aggregate Greek values. It also features visualization tools to help you analyze your portfolio’s risk metrics.
 
 ## Features
 
-- Tokenization and parsing of financial expressions
-- Evaluation of financial expressions involving assets, operations, and numeraires
-- Calculation of option Greeks (e.g., vega, delta, theta)
-- Caching of foreign exchange (FX) rates and historical prices
-- Debugging output for tracing the evaluation process
+- **Expression Tokenization & Parsing**  
+  - Tokenizes user-entered financial expressions (e.g., `"vega((0.4*aapl + 0.6*nvda) / usdsgd)"`).
+  - Constructs an AST using custom node classes to represent assets, operations, numeraires, and Greek functions.
+  
+- **Portfolio Evaluation**  
+  - Evaluates expressions by fetching market prices for assets, applying weights, and converting currencies using foreign exchange (FX) rates.
+  - Uses static mappings for market prices, FX rates, and option Greeks (with the potential to extend these to live APIs).
+
+- **Option Greek Calculation**  
+  - Recursively calculates option Greeks by traversing the AST.
+  - Aggregates individual Greek contributions (e.g., from assets weighted in a portfolio) to compute portfolio-level Greeks.
+
+- **Data Integration & Visualization**  
+  - Loads options and Greeks data from Parquet files.
+  - Provides functions to filter options data (e.g., selecting near-ATM or ITM call options with maturities close to a target value).
+  - Generates visualizations (using matplotlib) of Greek metrics (like Vega vs. Strike Prices and Theta vs. Time to Maturity) and embeds plots in HTML output.
+
+- **Interactive Command-Line Interface**  
+  - An interactive `main()` function accepts user expressions, displays debug information (including the AST), evaluates the expression, and outputs both numeric results and HTML-based plots.
+
+- **Debugging & Traceability**  
+  - Extensive debug logging to trace tokenization, AST construction, and evaluation steps.
 
 ## Project Structure
-
-- `QuantLang.ipynb`: The main Jupyter Notebook containing the implementation of QuantLang.
-
-## Classes
-
-### Node
-A base class for all nodes in the abstract syntax tree (AST).
-
-### WeightedAssetNode
-Represents an asset with a specific weight.
-
-### OperationNode
-Represents an operation (e.g., '+', '-', '/') with child nodes.
-
-### NumeraireNode
-Represents a numeraire (e.g., a currency).
-
-### FunctionNode
-Represents a financial function (e.g., 'vega', 'delta') with an argument.
-
-## Functions
-
-### `tokenize(expression)`
-Tokenizes a financial expression into a list of tokens.
-
-### `parse(tokens)`
-Parses a list of tokens into an AST.
-
-### `evaluate(node)`
-Evaluates an AST node.
-
-### `calculate_greek(node, greek)`
-Calculates the specified Greek for an AST node.
-
-### `get_historical_price(asset, date)`
-Fetches the historical price of an asset.
-
-### `get_fx_rate(currency_pair)`
-Fetches the real-time FX rate for a currency pair.
-
-## Usage
-
-1. Clone the repository.
-2. Open `QuantLang.ipynb` in Jupyter Notebook.
-3. Run the cells to initialize the classes and functions.
-4. Use the `main()` function to interact with the Portfolio Calculator.
-
-## Example
-
-```python
-# Example expression: Calculate the vega of a portfolio
-expression = "vega((0.4*aapl + 0.6*nvda) / usdsgd)"
-tokens = tokenize(expression)
-ast = parse(tokens)
-result = evaluate(ast)
-print(f"Result: {result}")
+```
+├── DataSource.ipynb
+├── NLP.ipynb
+├── QuantLang.ipynb
+├── README.md
+├── Test.ipynb
+├── data
+│   ├── aapl_momentum.png
+│   ├── greeks_data.parquet
+│   ├── options_data.parquet
+│   └── quantlang_portfolio_report.html
+└── modules
+    ├── Option.py
+    ├── chebyshev_interpolator.py
+    ├── crank_nicolson.py
+    ├── dq_plus.py
+    ├── quadrature_nodes.py
+    └── utils.py
 ```
 
-## Acknowledgments
-Yahoo Finance for financial data.
